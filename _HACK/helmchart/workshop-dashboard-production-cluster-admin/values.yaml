@@ -1,0 +1,19 @@
+application_name: dashboard
+auth_password: '# TODO: must define a default value for .auth_password'
+auth_username: '# TODO: must define a default value for .auth_username'
+cluster_subdomain: '# TODO: must define a default value for .cluster_subdomain'
+console_branding: openshift
+console_image: quay.io/openshift/origin-console:latest
+console_version: '# TODO: must define a default value for .console_version'
+download_url: '# TODO: must define a default value for .download_url'
+gateway_envvars: '# TODO: must define a default value for .gateway_envvars'
+kubectl_version: '# TODO: must define a default value for .kubectl_version'
+oc_version: '# TODO: must define a default value for .oc_version'
+odo_version: '# TODO: must define a default value for .odo_version'
+openshift_project: '# TODO: must define a default value for .openshift_project'
+project_name: '# TODO: must define a default value for .project_name'
+terminal_envvars: '# TODO: must define a default value for .terminal_envvars'
+terminal_image: quay.io/openshifthomeroom/workshop-dashboard:4.3.0
+workshop_envvars: '# TODO: must define a default value for .workshop_envvars'
+workshop_file: '# TODO: must define a default value for .workshop_file'
+workshopper_urls: '# TODO: must define a default value for .workshopper_urls'

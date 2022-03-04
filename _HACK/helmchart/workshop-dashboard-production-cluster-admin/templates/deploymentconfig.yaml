@@ -1,0 +1,92 @@
+apiVersion: v1
+kind: DeploymentConfig
+metadata:
+  labels:
+    app: {{ .Values.application_name }}
+  name: {{ .Values.application_name }}
+spec:
+  replicas: 1
+  selector:
+    app: {{ .Values.application_name }}
+    deploymentconfig: {{ .Values.application_name }}
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.application_name }}
+        deploymentconfig: {{ .Values.application_name }}
+    spec:
+      containers:
+      - env:
+        - name: PROJECT_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: APPLICATION_NAME
+          value: {{ .Values.application_name }}
+        - name: CONFIGURATION_TYPE
+          value: cluster-admin
+        - name: AUTH_USERNAME
+          value: {{ .Values.auth_username }}
+        - name: AUTH_PASSWORD
+          value: {{ .Values.auth_password }}
+        - name: CLUSTER_SUBDOMAIN
+          value: {{ .Values.cluster_subdomain }}
+        - name: OPENSHIFT_PROJECT
+          value: {{ .Values.openshift_project }}
+        - name: OAUTH_SERVICE_ACCOUNT
+          value: {{ .Values.application_name }}-user
+        - name: DOWNLOAD_URL
+          value: {{ .Values.download_url }}
+        - name: WORKSHOP_FILE
+          value: {{ .Values.workshop_file }}
+        - name: CONSOLE_URL
+          value: http://0.0.0.0:10083
+        - name: OC_VERSION
+          value: {{ .Values.oc_version }}
+        - name: ODO_VERSION
+          value: {{ .Values.odo_version }}
+        - name: KUBECTL_VERSION
+          value: {{ .Values.kubectl_version }}
+        image: {{ .Values.application_name }}:latest
+        name: terminal
+        ports:
+        - containerPort: 10080
+          protocol: TCP
+        volumeMounts:
+        - mountPath: /opt/workshop/envvars
+          name: envvars
+      - command:
+        - /opt/bridge/bin/bridge
+        env:
+        - name: BRIDGE_K8S_MODE
+          value: in-cluster
+        - name: BRIDGE_LISTEN
+          value: http://0.0.0.0:10083
+        - name: BRIDGE_BASE_PATH
+          value: /console/
+        - name: BRIDGE_PUBLIC_DIR
+          value: /opt/bridge/static
+        - name: BRIDGE_USER_AUTH
+          value: disabled
+        - name: BRIDGE_BRANDING
+          value: {{ .Values.console_branding }}
+        image: {{ .Values.console_image }}
+        name: console
+      serviceAccountName: {{ .Values.application_name }}-user
+      volumes:
+      - configMap:
+          defaultMode: 420
+          name: {{ .Values.application_name }}-env
+        name: envvars
+  triggers:
+  - type: ConfigChange
+  - imageChangeParams:
+      automatic: true
+      containerNames:
+      - terminal
+      from:
+        kind: ImageStreamTag
+        name: {{ .Values.application_name }}:latest
+    type: ImageChange

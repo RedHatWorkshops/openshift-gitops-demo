@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: {{ .Values.application_name }}
+  name: {{ .Values.application_name }}
+spec:
+  ports:
+  - name: 10080-tcp
+    port: 10080
+    protocol: TCP
+    targetPort: 10080
+  selector:
+    app: {{ .Values.application_name }}
+    deploymentconfig: {{ .Values.application_name }}
